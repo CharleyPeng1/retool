@@ -1,0 +1,34 @@
+version: '2'
+services:
+  api:
+    build:
+      context: .
+      args:
+        ENV_FILE: "./docker.env"
+    depends_on:
+      - postgres
+    command: bash -c "chmod -R +x ./docker_scripts; sync; ./docker_scripts/wait-for-it.sh postgres:5432 -- sequelize db:migrate; yarn pull:dist; yarn start"
+    links:
+      - postgres
+    ports:
+      - '3000:3000'
+      - '3001:80'
+      - '3002:3002'
+  postgres:
+    image: 'postgres'
+    env_file: ./docker.env
+    volumes:
+      - data:/var/lib/postgresql/data
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    links:
+      - api
+    restart: always
+    env_file: ./docker.env
+    environment:
+      STAGE: 'production'
+volumes:
+  data:

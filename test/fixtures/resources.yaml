@@ -1,0 +1,12 @@
+fixtures:
+  - model: Resource
+    data:
+      id: 100001
+      name: MongoTest
+      type: Chris
+      host: Baker
+      port: '27017'
+      databaseName: mongo_test
+      databaseUsername: mongo
+      databasePassword: mongo
+      organization: 100001

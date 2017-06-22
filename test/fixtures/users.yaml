@@ -1,0 +1,40 @@
+fixtures:
+  - model: User
+    data:
+      id: 100001
+      email: chris@retool.in
+      firstName: Chris
+      lastName: Baker
+      profilePhotoUrl: profile1.png
+      googleId: googleId1
+      googleToken: googleToken1
+      organization: 100001
+  - model: User
+    data:
+      id: 100002
+      email: george@retool.in
+      firstName: George
+      lastName: Bloom
+      profilePhotoUrl: profile2.png
+      googleId: googleId2
+      googleToken: googleToken2
+      organization: 100001
+  - model: User
+    data:
+      id: 100003
+      email: sarah@getcashew.com
+      firstName: Sarah
+      lastName: Cliff
+      profilePhotoUrl: profile3.png
+      googleId: googleId3
+      googleToken: googleToken3
+      organization: 100002
+  - model: User
+    data:
+      id: 100004
+      email: rachel@example.com
+      firstName: Rachel
+      lastName: Ross
+      profilePhotoUrl: profile4.png
+      organization: 100003
+      hashedPassword: $2a$04$Bm/JBXB2fojh.sn8RlKtJOs58FcDsC6L7p/QtIaju09TLXiqrjvXW

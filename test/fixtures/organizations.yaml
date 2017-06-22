@@ -1,0 +1,17 @@
+fixtures:
+  - model: Organization
+    data:
+      id: 100001
+      domain: retool.in
+      name: retoolin
+      hostname: api.retool.in
+  - model: Organization
+    data:
+      id: 100002
+      domain: getcashew.com
+      name: Cashew
+      hostname: api.getcashew.com
+  - model: Organization
+    data:
+      id: 100003
+      name: rachel@example.com

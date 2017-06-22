@@ -1,0 +1,27 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "standard",
+  ],
+  "plugins": [
+    "babel",
+    "promise"
+  ],
+  "env": {
+    "browser" : true
+  },
+  "globals": {
+    "__DEV__"      : false,
+    "__TEST__"     : false,
+    "__PROD__"     : false,
+    "__COVERAGE__" : false
+  },
+  "rules": {
+    "key-spacing"                 : 0,
+    "jsx-quotes"                  : [2, "prefer-single"],
+    "max-len"                     : ["error", { "ignoreStrings": true, "code": 120 }],
+    "object-curly-spacing"        : "off",
+    "comma-dangle"                : [2, "always-multiline"],
+    "no-new-func"                 : "off",
+  }
+}

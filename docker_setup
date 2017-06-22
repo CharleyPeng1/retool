@@ -1,0 +1,27 @@
+#!/bin/bash
+
+postgresPassword=$(cat /dev/urandom | base64 | head -c 64)
+jwtSecret=$(cat /dev/urandom | base64 | head -c 256)
+
+echo "Hi! I'm here to help you set up a self-hosted Retool."
+echo "Just one question: what's the hostname of this server?"
+read -p "Enter it here: (e.g. retool.example.com) " hostname
+
+if [ -f ./docker.env ]; then
+  mv docker.env docker.env.$(date +"%Y-%m-%d_%H-%M-%S")
+fi
+touch docker.env
+
+echo 'POSTGRES_DB=hammerhead_production' >> docker.env
+echo 'POSTGRES_USER=retool_internal_user' >> docker.env
+echo 'POSTGRES_HOST=postgres' >> docker.env
+echo 'POSTGRES_PORT=5432' >> docker.env
+echo 'PORT=80' >> docker.env
+
+echo "POSTGRES_PASSWORD=${postgresPassword}" >> docker.env
+echo "JWT_SECRET=${jwtSecret}" >> docker.env
+
+echo "DOMAINS=${hostname} -> http://api" >> docker.env
+echo "HOSTNAME=${hostname}" >> docker.env
+
+echo "Cool! Now just run docker-compose up to launch Retool."

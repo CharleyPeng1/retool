@@ -1,0 +1,31 @@
+#!/bin/bash
+# set -euf -o pipefail
+echo 'Installing dependencies...'
+
+npm install
+
+npm install -g sequelize-cli
+
+jwtSecret=$(cat /dev/urandom | base64 | head -c 256)
+
+echo 'Checking if .env file present...'
+if ! [ -f .env ]; then
+  echo 'Generating .env file...'
+  touch .env
+  echo "JWT_SECRET=${jwtSecret}" >> .env
+  echo "NODE_ENV=local" >> .env
+fi
+
+echo 'Checking if database file present...'
+if ! [ -f retool.db ]; then
+  touch retool.db
+
+  echo 'Creating and migrating sqlite database'
+  NODE_ENV=local sequelize db:migrate
+fi
+
+echo 'Downloading latest bundle'
+npm run pull:dist
+
+echo 'Starting server...'
+npm run start
