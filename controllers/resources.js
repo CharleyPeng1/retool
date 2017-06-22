@@ -113,7 +113,7 @@ const runSqlQuery = (req, res) => {
       const params = req.body.parameters
       const options = req.body.options
 
-      dispatchQuery(req, res, resource, query, params, options)
+      dispatchQuery(req, res, resource.dataValues, query, params, options)
     })
     .catch(error => {
       res.status(400).send({error: error.message})
@@ -138,7 +138,7 @@ const preview = (req, res) => {
         res.send({ result: {} })
       }
 
-      dispatchQuery(req, res, resource, query, params, options)
+      dispatchQuery(req, res, resource.dataValues, query, params, options)
     })
 }
 

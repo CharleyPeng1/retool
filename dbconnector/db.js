@@ -4,6 +4,7 @@
  * Proprietary and confidential
  * Written by Retool, Inc <contact@retool.in>, 2017
  */
+const deepEqual = require('deep-equal')
 
 const pgDriver = require('./postgres.js')
 const mysqlDriver = require('./mysql.js')
@@ -47,14 +48,21 @@ function testConnection (resource) {
   })
 }
 
+function resourceChanged(r1, r2) {
+  return !deepEqual(r1, r2)
+}
+
 function getPool (resource) {
-  if (!pools[resource.id]) {
+  if (!pools[resource.id] || resourceChanged(pools[resource.id].resource, resource)) {
     const newPool = createPool(resource)
     if (newPool) {
-      pools[resource.id] = newPool
+      pools[resource.id] = {
+        pool: newPool,
+        resource,
+      }
     }
   }
-  return pools[resource.id]
+  return pools[resource.id].pool
 }
 
 // Gets the schema for a resource
