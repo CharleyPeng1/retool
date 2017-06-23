@@ -19,6 +19,12 @@ const client = new googleAuth.OAuth2(CLIENT_ID, '', '')
 const SALT_ROUNDS = 12
 
 const login = (req, res) => {
+  if (process.env.RESTRICTED_DOMAIN) {
+    return res.status(422).send({
+      error: true,
+      message: 'Login via email & password is disabled',
+    })
+  }
   const { email, password, firstName, lastName } = req.body
 
   User.findOne({ where: {email: email} }).then(user => {
@@ -58,6 +64,13 @@ const login = (req, res) => {
 
 const signup = (req, res) => {
   const { email, password, firstName, lastName } = req.body
+
+  if (process.env.RESTRICTED_DOMAIN) {
+    return res.status(422).send({
+      error: true,
+      message: 'Signup via password is disabled',
+    })
+  }
 
   User.findOne({ where: {email: email} }).then(user => {
     if (!user) {
@@ -120,6 +133,14 @@ const loginViaGoogle = (req, res) => {
         } else {
           const token = auth.generateToken({email})
           const name = payload.hd ? payload.hd : payload.email
+          if (process.env.RESTRICTED_DOMAIN) {
+            if (payload.hd !== process.env.RESTRICTED_DOMAIN) {
+              return res.status(422).send({
+                error: true,
+                message: `Cannot login from domain ${payload.hd} not allowed.`,
+              })
+            }
+          }
           return Organization.findOrCreate({
             where: {
               domain: payload.hd,
