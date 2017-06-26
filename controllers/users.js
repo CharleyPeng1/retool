@@ -108,8 +108,8 @@ const signup = (req, res) => {
 }
 
 const loginViaGoogle = (req, res) => {
-  const token = req.query.token
-  client.verifyIdToken(token, CLIENT_ID, (e, login) => {
+  const googleToken = req.query.token
+  client.verifyIdToken(googleToken, CLIENT_ID, (e, login) => {
     if (e) {
       return res.status(404).json({
         error: true,
@@ -155,7 +155,7 @@ const loginViaGoogle = (req, res) => {
                 lastName: payload.family_name,
                 profilePhotoUrl: payload.picture,
                 googleId: payload.sub,
-                googleToken: token,
+                googleToken: googleToken,
               })
               .then(user => res.status(201).send({
                 user,
