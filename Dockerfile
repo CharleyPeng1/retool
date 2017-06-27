@@ -12,7 +12,6 @@ COPY   $ENV_FILE $APP_ROOT/.env
 WORKDIR /retool_backend
 
 RUN yarn install
-RUN yarn global add sequelize-cli
 
 EXPOSE 3000
 EXPOSE 3001

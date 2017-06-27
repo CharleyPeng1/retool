@@ -7,7 +7,7 @@ services:
         ENV_FILE: "./docker.env"
     depends_on:
       - postgres
-    command: bash -c "chmod -R +x ./docker_scripts; sync; ./docker_scripts/wait-for-it.sh postgres:5432 -- sequelize db:migrate; yarn pull:dist; yarn start"
+    command: bash -c "chmod -R +x ./docker_scripts; sync; ./docker_scripts/wait-for-it.sh postgres:5432 -- yarn sequelize db:migrate; yarn pull:dist; yarn start"
     links:
       - postgres
     ports:
