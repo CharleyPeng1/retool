@@ -133,7 +133,9 @@ const loginViaGoogle = (req, res) => {
         const email = user.emails[0].value
         User.findOne({ where: {email: email} }).then(foundUser => {
           if (foundUser) {
-            foundUser.getOrganization()
+            foundUser
+              .update({ googleToken: JSON.stringify(googleToken) })
+              .then(user => user.getOrganization())
               .then(org => {
                 const token = auth.generateToken({email})
                 res.send({
