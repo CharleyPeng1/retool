@@ -45,7 +45,7 @@ const createResource = (req, res) => {
     'databaseUsername', 'databasePassword',
   ])
   // Test to make sure the resource is valid.
-  db.testConnection(params, req.user)
+  db.testConnection(params)
     .then((result) => {
       return req.user.getOrganization()
     })

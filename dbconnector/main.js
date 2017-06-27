@@ -6,5 +6,5 @@
  */
 
 console.log('Starting database connector server')
-app = require('./app')
+const app = require('./app')
 app.listen(process.env.DB_CONNECTOR_PORT || 3002)

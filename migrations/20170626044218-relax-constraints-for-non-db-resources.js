@@ -9,46 +9,39 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    queryInterface.changeColumn(
+    return queryInterface.changeColumn(
       'resources',
       'host',
-      {
-        type: Sequelize.STRING,
-        allowNull: true,
-      }
+      { type: Sequelize.STRING, allowNull: true }
     )
-    queryInterface.changeColumn(
-      'resources',
-      'port',
-      {
-        type: Sequelize.STRING,
-        allowNull: true,
-      }
-    )
-    queryInterface.changeColumn(
-      'resources',
-      'databaseName',
-      {
-        type: Sequelize.STRING,
-        allowNull: true,
-      }
-    )
-    queryInterface.changeColumn(
-      'resources',
-      'databaseUsername',
-      {
-        type: Sequelize.STRING,
-        allowNull: true,
-      }
-    )
-    queryInterface.changeColumn(
-      'resources',
-      'databasePassword',
-      {
-        type: Sequelize.STRING,
-        allowNull: true,
-      }
-    )
+      .then(() => {
+        return queryInterface.changeColumn(
+          'resources',
+          'port',
+          { type: Sequelize.STRING, allowNull: true }
+        )
+      })
+      .then(() => {
+        return queryInterface.changeColumn(
+          'resources',
+          'databaseName',
+          { type: Sequelize.STRING, allowNull: true }
+        )
+      })
+      .then(() => {
+        return queryInterface.changeColumn(
+          'resources',
+          'databaseUsername',
+          { type: Sequelize.STRING, allowNull: true }
+        )
+      })
+      .then(() => {
+        return queryInterface.changeColumn(
+          'resources',
+          'databasePassword',
+          { type: Sequelize.STRING, allowNull: true }
+        )
+      })
   },
 
   down: function (queryInterface, Sequelize) {

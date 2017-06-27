@@ -32,13 +32,13 @@ function createPool (resource) {
   return driver.createPool(resource)
 }
 
-function createClient (resource, user) {
+function createClient (resource) {
   const driver = resolveDriver(resource)
   return driver.createClient(resource)
 }
 
-function testConnection (resource, user) {
-  const client = createClient(resource, user)
+function testConnection (resource) {
+  const client = createClient(resource)
   return new Promise((resolve, reject) => {
     client.connect((err) => {
       if (err) {

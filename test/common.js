@@ -13,19 +13,19 @@ const chaiHttp = require('chai-http')
 global.chai = require('chai')
 global.chai.use(chaiHttp)
 global.expect = chai.expect
-global.server = require('../app.js')
+global.server = require('../server/app.js')
 global.databaseConnector = require('../dbconnector/app.js')
 
 // Make the sequelize db object global
 console.log('Initializing sequelize ORM.\n')
-global.models = require('../models')
+global.models = require('../server/models')
 console.log('\nStarting tests.')
 
 // For setting up test database data
 const fixtures = require('sequelize-fixtures')
 
 // Start the app and dbconnector servers
-const app = require('../app.js')
+const app = require('../server/app.js')
 const dbconnector = require ('../dbconnector/app.js')
 let appServer
 let databaseConnectorServer

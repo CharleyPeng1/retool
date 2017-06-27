@@ -4,10 +4,16 @@
   "description": "A backend that lets Retool connect to your database.",
   "main": "app.js",
   "scripts": {
+    "sequelize": "./node_modules/.bin/sequelize --config ./server/config.js",
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec --recursive",
     "test:watch": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec --recursive --watch",
     "pull:dist": "mkdir -p ./dist && curl https://retool.in/build/build.tar.gz -o build.tar.gz && tar -xzvf build.tar.gz --directory ./dist && rm ./build.tar.gz",
-    "start": "node main.js"
+    "start": "node server/main.js",
+    "build:server": "./node_modules/.bin/babel -d ./build/server ./server",
+    "build:http_server": "./node_modules/.bin/babel -d ./build/http_server ./http_server",
+    "build:dbconnector": "./node_modules/.bin/babel -d ./build/dbconnector ./dbconnector",
+    "build:dist": "npm run pull:dist && cp -R ./dist ./build",
+    "build:all": "npm run build:server && npm run build:http_server && npm run build:dbconnector && npm run build:dist && cp .env ./build"
   },
   "repository": {
     "type": "git",
@@ -47,13 +53,16 @@
     "transit-js": "^0.8.846"
   },
   "devDependencies": {
+    "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
+    "babel-preset-env": "^1.5.2",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-babel": "^4.1.1",
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "eslint-plugin-standard": "^3.0.1",
+    "sequelize-cli": "^2.7.0"
   }
 }

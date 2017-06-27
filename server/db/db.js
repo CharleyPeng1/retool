@@ -24,10 +24,10 @@ const connectorBaseUrl = process.env.DB_CONNECTOR_HOST && process.env.DB_CONNECT
   ?  `${process.env.DB_CONNECTOR_HOST}:${process.env.DB_CONNECTOR_PORT}`
   :  'http://localhost:3002'
 
-function testConnection (resource, user) {
+function testConnection (resource) {
   return fetch(`${connectorBaseUrl}/api/testConnection`, {
     method: 'POST',
-    body: JSON.stringify({resource, user}),
+    body: JSON.stringify(resource),
     headers: { 'Content-Type': 'application/json' },
   }).then(processResult)
 }

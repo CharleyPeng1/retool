@@ -6,7 +6,7 @@
  */
 
 const { configs } = require('../common.js')
-const db = require('../../db/db.js')
+const db = require('../../server/db/db.js')
 
 describe('Database Connector Client', () => {
   describe('Testing connections', () => {
