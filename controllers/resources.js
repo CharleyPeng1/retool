@@ -134,10 +134,6 @@ const preview = (req, res) => {
       console.log(options)
       const resource = org.resources[0]
 
-      if (!query) {
-        res.send({ result: {} })
-      }
-
       dispatchQuery(req, res, resource.dataValues, query, params, options)
     })
 }
