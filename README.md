@@ -14,6 +14,7 @@ Setting up Retool to run on your local machine is easy
   * This will install all the dependencies, initialize the database, and start the server.
 4. Open up localhost:3000 to get started!
 
+> Note that when running locally, logging in via Google will not work - signup locally via username & password to start.
 
 ### Docker
 
