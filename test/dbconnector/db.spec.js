@@ -112,5 +112,31 @@ describe('Database Manager', () => {
           })
       })
     })
+
+    describe('GoogleSheets', () => {
+      const options = {
+        sheetId: '1FA8XdcOkpkU-8UY2uzZ7xLVyjFwVELJh_JkQyWdP3_E',
+        sheetRange: 'A2:E',
+      }
+      const user = {
+        googleToken: {
+          "access_token": "ya29.Glt1BKZolj3f3kh-Y0XrvxRu1DYs6rv0H9D4UODXHPxJ3AsltPfByKMVdxjDXXB7zP5gK4_ncKeWM8VbOGoYygNQjyWA1k08KyiSWQlQ6SrZ31I_-20TDwWXqa0z",
+          "token_type": "Bearer",
+          "expires_in": 3600,
+          "refresh_token": "1/dre0pehSvs5HMyEtH6WyOuqrUP57X6FRlJOWp9WHJGh7zpQQGqqpJXpbII_MjSE6"
+        }
+      }
+
+      it('Should forward queries', () => {
+        return db.runQuery(configs.googlesheets, '{}', [], options, user)
+          .then((result) => {
+            console.log('####', result)
+            expect(result).to.not.be.null
+          })
+          .catch((err) => {
+            console.log('EEEERRR')
+          })
+      })
+    })
   })
 })

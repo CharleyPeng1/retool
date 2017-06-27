@@ -24,7 +24,6 @@ module.exports = function (sequelize, DataTypes) {
       foreignKey: 'organization_id',
       onDelete: 'CASCADE',
     })
-
   }
 
   Resource.prototype.toJSON = function () {
@@ -34,6 +33,7 @@ module.exports = function (sequelize, DataTypes) {
       redshift: 'SqlQuery',
       http: 'ApiQuery',
       mongodb: 'NoSqlQuery',
+      googlesheets: 'GoogleSheetsQuery',
     }
 
     // https://github.com/sequelize/sequelize/issues/1462

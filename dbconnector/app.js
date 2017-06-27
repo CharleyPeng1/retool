@@ -31,9 +31,9 @@ app.use(bodyParser({ limit: '50mb' }))
 app.post('/api/testConnection', forwardToHandler(db.testConnection))
 app.post('/api/getSchema', forwardToHandler(db.getSchema))
 app.post('/api/runQuery', (req, res) => {
-  const { resource, query, params, options } = req.body
+  const { resource, query, params, options, user } = req.body
   try {
-    db.runQuery(resource, query, params, options)
+    db.runQuery(resource, query, params, options, user)
       .then((result) => {
         res.send(result)
       })

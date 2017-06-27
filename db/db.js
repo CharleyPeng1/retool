@@ -24,11 +24,10 @@ const connectorBaseUrl = process.env.DB_CONNECTOR_HOST && process.env.DB_CONNECT
   ?  `${process.env.DB_CONNECTOR_HOST}:${process.env.DB_CONNECTOR_PORT}`
   :  'http://localhost:3002'
 
-
-function testConnection (resource) {
+function testConnection (resource, user) {
   return fetch(`${connectorBaseUrl}/api/testConnection`, {
     method: 'POST',
-    body: JSON.stringify(resource),
+    body: JSON.stringify({resource, user}),
     headers: { 'Content-Type': 'application/json' },
   }).then(processResult)
 }
@@ -43,10 +42,10 @@ function getSchema (resource) {
 }
 
 // Runs a parameterized query.
-function runQuery (resource, query, params, options) {
+function runQuery (resource, query, params, options, user) {
   return fetch(`${connectorBaseUrl}/api/runQuery`, {
     method: 'POST',
-    body: JSON.stringify({ resource, query, params, options }),
+    body: JSON.stringify({ resource, query, params, options, user }),
     headers: { 'Content-Type': 'application/json' },
   }).then(processResult)
 }

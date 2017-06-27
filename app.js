@@ -16,7 +16,7 @@ const app = express()
 
 // apply CORS
 
-var whitelist = ['https://retool.in', 'http://localhost:3000', 'https://app.retool.in', 'https://demo.retool.in']
+var whitelist = ['https://retool.in', 'http://localhost:3000', 'http://localhost:3001', 'https://app.retool.in', 'https://demo.retool.in']
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {

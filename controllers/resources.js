@@ -45,7 +45,7 @@ const createResource = (req, res) => {
     'databaseUsername', 'databasePassword',
   ])
   // Test to make sure the resource is valid.
-  db.testConnection(params)
+  db.testConnection(params, req.user)
     .then((result) => {
       return req.user.getOrganization()
     })
@@ -75,7 +75,7 @@ const patchResource = (req, res) => {
         delete params.databasePassword
       }
       resource.set(params)
-      return db.testConnection(resource.dataValues).then(() => resource)
+      return db.testConnection(resource.dataValues, req.user).then(() => resource)
     })
     .then(resource => resource.save())
     .then(resource => res.send(resource))
@@ -143,7 +143,7 @@ const preview = (req, res) => {
 }
 
 function dispatchQuery (req, res, resource, query, params, options) {
-  db.runQuery(resource, query, params, options)
+  db.runQuery(resource, query, params, options, req.user.dataValues)
     .then((result) => {
       res.send(result)
       res.end()

@@ -56,10 +56,10 @@ beforeEach(() => {
       // Sync ORM and clean database. `force: true` drops all the current tables.
       return models.sequelize.sync({ force: true })
     })
-    .then(() => {
-      // Seed the database now. Suppress logging by specifying in an empty log function
-      return fixtures.loadFile('test/fixtures/*.yaml', models, { log: () => { } })
-    })
+    //.then(() => {
+      //// Seed the database now. Suppress logging by specifying in an empty log function
+      //return fixtures.loadFile('test/fixtures/*.yaml', models, { log: () => { } })
+    //})
 })
 
 
@@ -94,6 +94,11 @@ const configs = {
     databaseName: 'mongo_test',
     databaseUsername: '',
     databasePassword: '',
+  },
+  googlesheets: {
+    id: 4,
+    name: 'SheetsTest',
+    type: 'googlesheets',
   },
 }
 

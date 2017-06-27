@@ -7,15 +7,18 @@
 
 require('dotenv').config()
 
-const GoogleAuth = require('google-auth-library')
+const google = require('googleapis')
+const plus = google.plus('v1');
+const OAuth2 = google.auth.OAuth2
+
 var bcrypt = require('bcryptjs')
 
 const { User, Organization } = require('../models')
 const auth = require('../modules/auth.js')
 
-const googleAuth = new GoogleAuth()
 const CLIENT_ID = '716367306867-d861tjqj92gjb0uphcjt8gu2nvtf6e9t.apps.googleusercontent.com'
-const client = new googleAuth.OAuth2(CLIENT_ID, '', '')
+const client = new OAuth2(CLIENT_ID, process.env.CLIENT_SECRET, 'postmessage')
+
 const SALT_ROUNDS = 12
 
 const login = (req, res) => {
@@ -108,66 +111,78 @@ const signup = (req, res) => {
 }
 
 const loginViaGoogle = (req, res) => {
-  const googleToken = req.query.token
-  client.verifyIdToken(googleToken, CLIENT_ID, (e, login) => {
-    if (e) {
+  const authorizationCode = req.query.authorizationCode
+  client.getToken(authorizationCode, (err, googleToken) => {
+    if (err) {
       return res.status(404).json({
         error: true,
         message: 'Could not authenticate.',
       })
-    } else {
-      const payload = login.getPayload()
-      const email = payload.email
-      User.findOne({ where: {email: email} }).then(user => {
-        if (user) {
-          user.getOrganization()
-            .then(org => {
-              const token = auth.generateToken({email})
-              res.send({
-                user,
-                token,
-                hostname: org.hostname,
-                ownHostname: process.env.HOSTNAME,
-              })
-            })
-        } else {
-          const token = auth.generateToken({email})
-          const name = payload.hd ? payload.hd : payload.email
-          if (process.env.RESTRICTED_DOMAIN) {
-            if (payload.hd !== process.env.RESTRICTED_DOMAIN) {
-              return res.status(422).send({
-                error: true,
-                message: `Cannot login from domain ${payload.hd} not allowed.`,
-              })
-            }
-          }
-          return Organization.findOrCreate({
-            where: {
-              domain: payload.hd,
-              name,
-            },
-          }).spread(org => {
-            User
-              .create({
-                email,
-                organization_id: org.get('id'),
-                firstName: payload.given_name,
-                lastName: payload.family_name,
-                profilePhotoUrl: payload.picture,
-                googleId: payload.sub,
-                googleToken: googleToken,
-              })
-              .then(user => res.status(201).send({
-                user,
-                token,
-                hostname: org.hostname,
-                ownHostname: process.env.HOSTNAME,
-              }))
-              .catch(error => res.status(400).send(error))
-          })
-        }
-      })
     }
+    client.setCredentials(googleToken)
+    plus.people.get({
+      userId: 'me',
+      auth: client,
+    }, (e, user) => {
+      if (e) {
+        return res.status(404).json({
+          error: true,
+          message: 'Could not authenticate.',
+        })
+      } else {
+        const email = user.emails[0].value
+        User.findOne({ where: {email: email} }).then(foundUser => {
+          if (foundUser) {
+            foundUser.getOrganization()
+              .then(org => {
+                const token = auth.generateToken({email})
+                res.send({
+                  user,
+                  token,
+                  hostname: org.hostname,
+                  ownHostname: process.env.HOSTNAME,
+                })
+              })
+          } else {
+            const token = auth.generateToken({email})
+            const name = user.domain ? user.domain : email
+            if (process.env.RESTRICTED_DOMAIN) {
+              if (user.domain !== process.env.RESTRICTED_DOMAIN) {
+                return res.status(422).send({
+                  error: true,
+                  message: `Cannot login via Google. Domain ${user.domain} not allowed.`,
+                })
+              }
+            }
+            return Organization.findOrCreate({
+              where: {
+                domain: user.domain,
+                name,
+              },
+            }).spread(org => {
+              console.log('TOKEN', googleToken)
+              User
+                .create({
+                  email,
+                  organization_id: org.get('id'),
+                  firstName: user.name.given_name,
+                  lastName: user.name.family_name,
+                  profilePhotoUrl: user.image.url,
+                  googleId: user.id,
+                  googleToken: JSON.stringify(googleToken),
+                })
+                .then(user => res.status(201).send({
+                  user,
+                  token,
+                  hostname: org.hostname,
+                  ownHostname: process.env.HOSTNAME,
+                }))
+                .catch(error => res.status(400).send(error))
+            })
+          }
+        })
+      }
+    })
   })
 }
 
