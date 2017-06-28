@@ -111,6 +111,61 @@ const signup = (req, res) => {
 }
 
 const loginViaGoogle = (req, res) => {
+  const idToken = req.query.idToken
+  client.verifyIdToken(idToken, CLIENT_ID, (e, login) => {
+    if (e) {
+      return res.status(404).json({
+        error: true,
+        message: 'Could not authenticate.',
+      })
+    } else {
+      const payload = login.getPayload()
+      const email = payload.email
+      User.findOne({ where: {email: email} }).then(user => {
+        if (user) {
+          user.getOrganization()
+            .then(org => {
+              const token = auth.generateToken({email})
+              res.send({
+                user,
+                token,
+                hostname: org.hostname,
+                ownHostname: process.env.HOSTNAME,
+              })
+            })
+        } else {
+          const token = auth.generateToken({email})
+          const name = payload.hd ? payload.hd : payload.email
+          return Organization.findOrCreate({
+            where: {
+              domain: payload.hd,
+              name,
+            },
+          }).spread(org => {
+            User
+              .create({
+                email,
+                organization_id: org.get('id'),
+                firstName: payload.given_name,
+                lastName: payload.family_name,
+                profilePhotoUrl: payload.picture,
+                googleId: payload.sub,
+              })
+              .then(user => res.status(201).send({
+                user,
+                token,
+                hostname: org.hostname,
+                ownHostname: process.env.HOSTNAME,
+              }))
+              .catch(error => res.status(400).send(error))
+          })
+        }
+      })
+    }
+  })
+}
+
+const saveAuthorizationCode = (req, res) => {
   const authorizationCode = req.query.authorizationCode
   client.getToken(authorizationCode, (err, googleToken) => {
     if (err) {
@@ -131,56 +186,13 @@ const loginViaGoogle = (req, res) => {
         })
       } else {
         const email = user.emails[0].value
-        User.findOne({ where: {email: email} }).then(foundUser => {
+        User.findOne({ where: { email: email } }).then((foundUser) => {
           if (foundUser) {
             foundUser
               .update({ googleToken: JSON.stringify(googleToken) })
-              .then(user => user.getOrganization())
-              .then(org => {
-                const token = auth.generateToken({email})
-                res.send({
-                  user,
-                  token,
-                  hostname: org.hostname,
-                  ownHostname: process.env.HOSTNAME,
-                })
-              })
+              .then(() => res.send({ user }))
           } else {
-            const token = auth.generateToken({email})
-            const name = user.domain ? user.domain : email
-            if (process.env.RESTRICTED_DOMAIN) {
-              if (user.domain !== process.env.RESTRICTED_DOMAIN) {
-                return res.status(422).send({
-                  error: true,
-                  message: `Cannot login via Google. Domain ${user.domain} not allowed.`,
-                })
-              }
-            }
-            return Organization.findOrCreate({
-              where: {
-                domain: user.domain,
-                name,
-              },
-            }).spread(org => {
-              console.log('TOKEN', googleToken)
-              User
-                .create({
-                  email,
-                  organization_id: org.get('id'),
-                  firstName: user.name.given_name,
-                  lastName: user.name.family_name,
-                  profilePhotoUrl: user.image.url,
-                  googleId: user.id,
-                  googleToken: JSON.stringify(googleToken),
-                })
-                .then(user => res.status(201).send({
-                  user,
-                  token,
-                  hostname: org.hostname,
-                  ownHostname: process.env.HOSTNAME,
-                }))
-                .catch(error => res.status(400).send(error))
-            })
+            res.status(400).send({ error: 'No user found with that email' })
           }
         })
       }
@@ -192,4 +204,5 @@ module.exports = {
   login,
   signup,
   loginViaGoogle,
+  saveAuthorizationCode,
 }

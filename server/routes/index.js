@@ -16,6 +16,7 @@ module.exports = (app) => {
   app.post('/api/login', users.login)
   app.post('/api/signup', users.signup)
   app.post('/api/oauthcallback', users.loginViaGoogle)
+  app.post('/api/saveAuthorizationCode', users.saveAuthorizationCode)
 
   app.get('/api/organization', organizations.getOrganization)
 
