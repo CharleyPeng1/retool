@@ -53,6 +53,7 @@
     "transit-js": "^0.8.846"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
     "babel-preset-env": "^1.5.2",
